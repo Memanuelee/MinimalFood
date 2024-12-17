@@ -8,77 +8,215 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var progress: Double = 50.0
-
-    var minProgress = 0.0
-    var maxProgress = 100.0
-
+    
+    @State var repository = FoodRepository()
+    
     var body: some View {
-        VStack() {
-            
-            //Crei il cerchio dicendo dove deve prendere il valore da riferimento, in questo caso progress. .Animation(.linear) serve per quell'animazione ogni volta che sale o scende, l'errore giallo che fa riferimento è per dire che è presente una versione migliore del codice, ma anche così funziona.
-            CircularProgressView(progress: self.progress / 100)
-                .animation(.linear)
-
-            //Testo se incompleto o maxato il cerchio, dopodiché barra del progresso dove è collegata con il cerchio. Non serve per l'uso del progresso ma è per testare se funziona il tutto, infatti sotto troverai i tasti per ulteriori test.
+        NavigationStack {
             VStack {
-                if(progress == 100){
-                    Text("Maxato")
-                }else{
-                    Text("Incompleto")
+                ZStack {
+                    Rectangle()
+                        .fill(Color("greennew"))
+                        .stroke(Color("greenborder"), lineWidth: 3)
+                        .ignoresSafeArea()
+                    
+                    Text(Date.now.formatted(date: .complete, time: .omitted))
+                        .font(.system(size: 26))
+                        .bold()
+                        .foregroundStyle(.white)
                 }
                 
-                Text("Progress: \(progress, specifier: "%.1f")")
-                Slider(value: $progress,
-                       in: minProgress...maxProgress,
-                       minimumValueLabel: Text("0"),
-                       maximumValueLabel: Text("100")
-                ) {}
+                Spacer()
+                
+                VStack {
+                    if repository.progress >= 100 {
+                        ZStack {
+                            RadialGradient(
+                                gradient: Gradient(colors: [.yellow, Color("background")]),
+                                center: .center,
+                                startRadius: 1,
+                                endRadius: 130
+                            )
+                            
+                            CircularProgress(progress: repository.progress / 100)
+                                .animation(.linear, value: repository.progress)
+                                .accessibilityLabel(Text("Circular progress: \(repository.progress, specifier: "%.0f%%")"))
+                            
+                            Image(repository.kitchen[FoodRepository.userLevel-1].image)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 250, height: 250)
+                                .accessibilityLabel(Text("Goal food image"))
+                        }
+                        
+                        Text(repository.kitchen[FoodRepository.userLevel-1].name)
+                            .font(.system(size: 24))
+                            .bold()
+                            .accessibilityLabel(Text("\(repository.kitchen[FoodRepository.userLevel-1].name)"))
+                    } else {
+                        ZStack {
+                            CircularProgress(progress: repository.progress / 100)
+                                .animation(.linear, value: repository.progress)
+                                .accessibilityLabel(Text("Circular progress: \(repository.progress, specifier: "%.0f%%")"))
+                            
+                            Rectangle()
+                                .fill(Color("purpleborder"))
+                                .mask{
+                                    Image(repository.kitchen[FoodRepository.userLevel].image)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 250, height: 250)
+                                }
+                                .accessibilityLabel(Text("Hidden goal food image"))
+                        }
+                        
+                        Text("???")
+                            .font(.system(size: 24))
+                            .bold()
+                            .foregroundStyle(Color("greenborder"))
+                            .accessibilityLabel(Text("Hidden goal food name"))
+                    }
+                }
+                
+                Spacer()
+                
+                Text("Progress: \(repository.progress, specifier: "%.0f%%")")
+                
+                if FoodRepository.caloryTarget > 300 && (FoodRepository.caloryTarget-FoodRepository.caloryProgress) > 0 {
+                    Text("Missing Calories: \(FoodRepository.caloryTarget-FoodRepository.caloryProgress)")
+                }
+                
+                Divider()
+                    .padding()
+                
+                MotivationalPhrases(progress: repository.progress)
+                
+                Spacer()
+                
+                HStack {
+                    Button {
+                        repository.resetProgress()
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(Color("purplenew"))
+                                .stroke(Color("purpleborder"), lineWidth: 3)
+                                .frame(width: 70, height: 70)
+                            
+                            if repository.progress == 100 {
+                                Image(systemName: "circle.slash")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 45, height: 45)
+                                    .foregroundStyle(.white)
+                                    .accessibilityLabel(Text("Reset progress"))
+                            } else {
+                                Image(systemName: "arrow.trianglehead.clockwise")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 45, height: 45)
+                                    .foregroundStyle(.white)
+                                    .accessibilityLabel(Text("Reset progress"))
+                            }
+                        }
+                    }
+                    .disabled(repository.progress == 100)
+                    
+                    Spacer()
+                    
+                    if FoodRepository.caloryTarget > 300 {
+                        NavigationLink {
+                            AddCaloriesView().environment(repository)
+                        } label: {
+                            ZStack {
+                                Capsule()
+                                    .fill(Color("purplenew"))
+                                    .stroke(Color("purpleborder"), lineWidth: 3)
+                                    .frame(width: 140, height: 70)
+                                
+                                if repository.progress == 100 {
+                                    Image(systemName: "xmark.circle")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 45, height: 45)
+                                        .foregroundStyle(.white)
+                                        .accessibilityLabel(Text("Goal reached"))
+                                } else {
+                                    Image(systemName: "plus.circle")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 45, height: 45)
+                                        .foregroundStyle(.white)
+                                        .accessibilityLabel(Text("Add calories"))
+                                }
+                            }
+                        }
+                        .disabled(repository.progress == 100)
+                    } else {
+                        NavigationLink {
+                            SelectTargetView().environment(repository)
+                        } label: {
+                            ZStack {
+                                Capsule()
+                                    .fill(Color("purplenew"))
+                                    .stroke(Color("purpleborder"), lineWidth: 3)
+                                    .frame(width: 140, height: 70)
+                                
+                                Image(systemName: "play")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 45, height: 45)
+                                    .foregroundStyle(.white)
+                                    .accessibilityLabel(Text("Start goal"))
+                            }
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    NavigationLink {
+                        CollectionView().environment(repository)
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(Color("purplenew"))
+                                .stroke(Color("purpleborder"), lineWidth: 3)
+                                .frame(width: 70, height: 70)
+                            
+                            Image(systemName: "trophy.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 35, height: 35)
+                                .foregroundColor(.yellow)
+                        }
+                        .accessibilityLabel(Text("Collection"))
+                    }
+                    
+                }
+                .padding()
+                .background(
+                    Capsule()
+                        .fill(Color("greennew"))
+                        .overlay {
+                            Capsule()
+                                .stroke(Color("greenborder"), lineWidth: 3)
+                        }
+                        .padding(7)
+                )
             }
-            .padding()
-            
-            
-            //Alza di 10.
-            Button(action: {
-                progress += 10.0
-            }) {
-                Text("Alza")
-            }
-            .padding()
-            
-            //Abbassa di 10.
-            Button(action: {
-                progress += -10.0
-            }) {
-                Text("Abbassa")
-            }
-            .padding()
-
-            Spacer()
+            .background(
+                ZStack {
+                    Color("background")
+                        .ignoresSafeArea()
+                }
+                    .accessibilityLabel(Text("Background"))
+            )
         }
-        .padding(20)
+        .onAppear {
+            repository.update()
+        }
     }
 }
-
-
-//Dettaglia sul cerchio, quindi grandezza, colori e così via.
-struct CircularProgressView: View {
-    var progress: Double
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(Color(.systemGray4), lineWidth: 20)
-            Circle()
-                .trim(from: 0, to: CGFloat(self.progress))
-                .stroke(Color.blue, lineWidth: 20)
-        }
-        .rotationEffect(Angle(degrees: -90))
-        .frame(width: 200, height: 200)
-        .padding()
-    }
-}
-
 
 #Preview {
     ContentView()
