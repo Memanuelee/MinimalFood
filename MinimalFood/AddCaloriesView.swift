@@ -95,6 +95,7 @@ struct AddCaloriesView: View {
                             .multilineTextAlignment(.center)
                             .padding()
                             .frame(width: 140, height: .infinity)
+                            .keyboardType(.decimalPad)
                     }
                     
                     HStack {
