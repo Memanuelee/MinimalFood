@@ -5,6 +5,7 @@
 MinimalFood is an app for people with Eating Disorder or for who want a determinated number for calories to complete every day.
 You can change your goal in every moment without problems and unlock Foods completing your daily personal goal, every reward is different and unique.
 Get motivated with phrases basad on your percentage.
+VoiceOver implemented.
 
 # Screenshots
 ![Simulator Screenshot - iPhone 16 Pro - 2024-12-18 at 16 27 42](https://github.com/user-attachments/assets/6f642d33-bb00-4662-be58-0aeb51f64c03)
