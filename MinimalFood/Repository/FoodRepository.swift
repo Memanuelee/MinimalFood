@@ -36,7 +36,11 @@ class FoodRepository {
     
     @UserDefault(key: "lastUpdate", defaultValue: .now)
     private(set) static var lastUpdate: Date
-    
+    //
+    func resetUser(target: Int) {
+        FoodRepository.userLevel = 0
+    }
+    //
     func addNewCaloryTarget(target: Int) {
         FoodRepository.caloryTarget = target
     }

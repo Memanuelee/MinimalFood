@@ -42,17 +42,17 @@ struct ContentView: View {
                                 .animation(.linear, value: repository.progress)
                                 .accessibilityLabel(Text("Circular progress: \(repository.progress, specifier: "%.0f%%")"))
                             
-                            Image(repository.kitchen[FoodRepository.userLevel-1].image)
+                            Image(repository.kitchen[FoodRepository.userLevel - 1].image)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 250, height: 250)
-                                .accessibilityLabel(Text("Goal food image"))
+                                .accessibilityLabel(Text("Goal food"))
                         }
                         
-                        Text(repository.kitchen[FoodRepository.userLevel-1].name)
+                        Text(repository.kitchen[FoodRepository.userLevel - 1].name)
                             .font(.system(size: 24))
                             .bold()
-                            .accessibilityLabel(Text("\(repository.kitchen[FoodRepository.userLevel-1].name)"))
+                            .accessibilityLabel(Text("\(repository.kitchen[FoodRepository.userLevel - 1].name)"))
                     } else {
                         ZStack {
                             CircularProgress(progress: repository.progress / 100)
@@ -82,8 +82,8 @@ struct ContentView: View {
                 
                 Text("Progress: \(repository.progress, specifier: "%.0f%%")")
                 
-                if FoodRepository.caloryTarget > 300 && (FoodRepository.caloryTarget-FoodRepository.caloryProgress) > 0 {
-                    Text("Missing Calories: \(FoodRepository.caloryTarget-FoodRepository.caloryProgress)")
+                if FoodRepository.caloryTarget > 300 && (FoodRepository.caloryTarget - FoodRepository.caloryProgress) > 0 {
+                    Text("Missing Calories: \(FoodRepository.caloryTarget - FoodRepository.caloryProgress)")
                 }
                 
                 Divider()
