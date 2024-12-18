@@ -15,3 +15,6 @@ VoiceOver implemented.
 ![Simulator Screenshot - iPhone 16 Pro - 2024-12-18 at 16 28 10](https://github.com/user-attachments/assets/f0bd69cd-f42b-4067-968a-8f9d751bf233)
 
 ![Simulator Screenshot - iPhone 16 Pro - 2024-12-18 at 16 33 45](https://github.com/user-attachments/assets/3524eb52-fdac-47fb-b53b-1bcd7bbcc476)
+
+# Credits
+Arts - Rita Guerriero (aka Rudy) and Beta Tester - Alessio Garzia Marotta.
